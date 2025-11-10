@@ -1,15 +1,21 @@
 # Chrome DevTools MCP CLI
 
+[![npm chrome-devtools-mcp package](https://img.shields.io/npm/v/chrome-devtools-cli.svg)](https://npmjs.org/package/chrome-devtools-cli)
+
 A command-line interface for connecting to and interacting with Chrome DevTools through the Model Context Protocol (MCP). This CLI keeps a persistent connection open to the Chrome DevTools MCP server, allowing you to programmatically control Chrome browsers.
 
 ## Features
 
-- 🔌 Persistent connection to Chrome DevTools MCP server
-- 🛠️ Interactive REPL for browser control
-- 📋 List all available tools
-- 🎯 Call tools with arguments directly from CLI
-- 🔒 Graceful connection management and cleanup
-- ⌨️ Simple, intuitive command interface
+- 📡 Persistent connection to Chrome DevTools MCP server
+- 💻 Interactive REPL for browser control
+- 🛠️ List all available tools
+- 🔧 Call tools with arguments directly from CLI
+
+## Requirements
+
+- [Node.js](https://nodejs.org/) v20.19 or a newer [latest maintenance LTS](https://github.com/nodejs/Release#release-schedule) version.
+- [Chrome](https://www.google.com/chrome/) current stable version or newer.
+- [npm](https://www.npmjs.com/).
 
 ## Installation
 
@@ -75,12 +81,9 @@ npm start -- --help
 ## Example Session
 
 ```
-🔌 Connecting to Chrome DevTools MCP server...
-   Command: npx
-   Args: -y @chrome-devtools-mcp@latest
-✅ Connected successfully!
+📡 Connecting to Chrome DevTools MCP server...
 
-📋 Available tools:
+🛠️ Available tools:
   1. navigate
   2. take_screenshot
   3. get_page_info
@@ -90,7 +93,7 @@ npm start -- --help
 Type "help" for available commands or "exit" to quit.
 
 chrome-devtools> tools
-📋 Available tools:
+🛠️ Available tools:
   1. navigate
   2. take_screenshot
   3. get_page_info
@@ -98,17 +101,16 @@ chrome-devtools> tools
 
 chrome-devtools> navigate https://example.com
 🔧 Calling tool: navigate...
-📤 Result:
+📋 Result:
 { "success": true, "url": "https://example.com" }
 
 chrome-devtools> take_screenshot /tmp/screenshot.png
 🔧 Calling tool: take_screenshot...
-📤 Result:
+📋 Result:
 { "success": true, "path": "/tmp/screenshot.png" }
 
 chrome-devtools> exit
-🔌 Disconnecting from server...
-✅ Disconnected successfully
+📡 Disconnecting from server...
 ```
 
 ## Architecture
@@ -116,9 +118,8 @@ chrome-devtools> exit
 The CLI is built with the following components:
 
 - **ChromeDevToolsCLI**: Main class that manages the connection and REPL
-- **McpClient**: Uses the `mcp-use` library to connect to MCP servers
+- **McpClient**: Uses the MCP client SDK to connect to MCP servers
 - **Readline Interface**: Provides the interactive command-line experience
-- **Signal Handlers**: Gracefully handles SIGINT (Ctrl+C) and SIGTERM
 
 ### Connection Flow
 

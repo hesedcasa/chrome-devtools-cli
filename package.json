@@ -1,6 +1,6 @@
 {
   "name": "chrome-devtools-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "CLI tool to connect and interact with Chrome DevTools MCP server",
   "main": "dist/index.js",
   "bin": {
@@ -12,16 +12,29 @@
     "start": "tsx src/index.ts",
     "dev": "tsx src/index.ts"
   },
-  "keywords": ["mcp", "chrome", "devtools", "cli"],
-  "author": "",
-  "license": "MIT",
+  "keywords": [
+    "chrome-devtools-cli",
+    "chrome",
+    "devtools",
+    "cli"
+  ],
+  "author": "Hesed",
+  "license": "Apache-2.0",
   "dependencies": {
-    "mcp-use": "^1.0.0",
     "@modelcontextprotocol/sdk": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hesedcasa/chrome-devtools-cli.git"
+  },
+  "types": "./dist/index.d.ts",
+  "bugs": {
+    "url": "https://github.com/hesedcasa/chrome-devtools-cli/issues"
+  },
+  "homepage": "https://github.com/hesedcasa/chrome-devtools-cli#readme"
 }

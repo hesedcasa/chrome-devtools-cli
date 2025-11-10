@@ -27,7 +27,7 @@ This is a **single-file TypeScript CLI** that provides a REPL interface for cont
 ### Core Components (src/index.ts:1-273)
 
 - **ChromeDevToolsCLI class**: Main orchestrator managing:
-  - `connect()` - Establishes MCP server connection via `mcp-use` library
+  - `connect()` - Establishes MCP server connection using the `@modelcontextprotocol/sdk` client and stdio transport
   - `start()` - Initiates interactive REPL with readline interface
   - `handleCommand()` - Parses and processes user commands
   - `callTool()` - Executes MCP tools with JSON argument parsing
@@ -107,7 +107,7 @@ chrome-devtools> exit                     # Exit
 ```
 src/index.ts (273 lines)
 ├── Imports (lines 1-8)
-│   ├── mcp-use for server connection
+│   ├── @modelcontextprotocol/sdk and stdio transport for server connection
 │   ├── @modelcontextprotocol/sdk for MCP types
 │   └── readline/promises for REPL
 ├── Type definitions (lines 10-18)
@@ -128,17 +128,16 @@ src/index.ts (273 lines)
 
 - **Argument Parsing**: Supports `--command` and `--args` flags for custom MCP servers
 - **Tool Arguments**: Accepts both JSON (`{"key": "value"}`) and string arguments
-- **Connection Management**: Uses `mcp-use` to connect via stdio transport
+- **Connection Management**: Uses `@modelcontextprotocol/sdk` with a StdioClientTransport to connect via stdio transport
 - **Signal Handling**: Graceful shutdown on Ctrl+C (SIGINT) and SIGTERM
 - **Error Handling**: Try-catch blocks for connection and tool execution
 
 ## Dependencies
 
-**Runtime (2)**:
+**Runtime**:
 - `@modelcontextprotocol/sdk@^1.0.0` - Official MCP client SDK
-- `mcp-use@^1.0.0` - MCP server connection utility
 
-**Development (3)**:
+**Development**:
 - `typescript@^5.0.0` - TypeScript compiler
 - `tsx@^4.0.0` - TypeScript execution runtime
 - `@types/node@^20.0.0` - Node.js type definitions
