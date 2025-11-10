@@ -1,0 +1,27 @@
+{
+  "name": "chrome-devtools-cli",
+  "version": "1.0.0",
+  "description": "CLI tool to connect and interact with Chrome DevTools MCP server",
+  "main": "dist/index.js",
+  "bin": {
+    "chrome-mcp-cli": "dist/index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsx src/index.ts",
+    "dev": "tsx src/index.ts"
+  },
+  "keywords": ["mcp", "chrome", "devtools", "cli"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "mcp-use": "^1.0.0",
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}
