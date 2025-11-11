@@ -1,5 +1,6 @@
 import { COMMANDS } from "../config/index.js";
 import {
+  getCurrentVersion,
   printAvailableCommands,
   printCommandDetail,
 } from "../commands/index.js";
@@ -14,7 +15,7 @@ export const parseArguments = async (args: string[]): Promise<boolean> => {
   for (let i = 0; i < args.length; i++) {
     // Version flag
     if (args[i] === "--version" || args[i] === "-v") {
-      console.log("1.0.1");
+      console.log(getCurrentVersion());
       process.exit(0);
     }
 

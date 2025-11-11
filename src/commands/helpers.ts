@@ -35,3 +35,7 @@ export const printCommandDetail = (command: string): void => {
 
   console.log(`${name}\n${info}${detail ? `\n${detail}` : ""}`);
 };
+
+export const getCurrentVersion = (): string => {
+  return "1.1.1";
+};

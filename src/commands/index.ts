@@ -1,2 +1,6 @@
-export { printAvailableCommands, printCommandDetail } from './helpers.js';
-export { runCommand } from './runner.js';
+export {
+  getCurrentVersion,
+  printAvailableCommands,
+  printCommandDetail,
+} from "./helpers.js";
+export { runCommand } from "./runner.js";

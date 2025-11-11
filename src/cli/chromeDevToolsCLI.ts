@@ -4,6 +4,7 @@ import { CallToolResultSchema } from "@modelcontextprotocol/sdk/types.js";
 import readline from "readline";
 import { DEFAULT_CHROME_SERVER } from "../config/index.js";
 import {
+  getCurrentVersion,
   printAvailableCommands,
   printCommandDetail,
 } from "../commands/index.js";
@@ -143,8 +144,10 @@ export class chromeDevToolsCLI {
    * Prints help message
    */
   private printHelp(): void {
+    const version = getCurrentVersion();
+
     console.log(`
-Chrome DevTools CLI
+Chrome DevTools CLI v${version}
 
 Usage:
 
