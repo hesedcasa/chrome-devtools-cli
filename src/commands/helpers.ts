@@ -1,0 +1,37 @@
+import { COMMANDS, COMMANDS_INFO, COMMANDS_DETAIL } from "../config/index.js";
+
+/**
+ * Prints all available commands with their descriptions
+ */
+export const printAvailableCommands = (): void => {
+  console.log("\nAvailable commands:");
+  COMMANDS.forEach((name, i) => {
+    const info = COMMANDS_INFO[i];
+    console.log(`${i + 1}. ${name}: ${info}`);
+  });
+};
+
+/**
+ * Prints detailed information about a specific command
+ * @param command - The command name to get details for
+ */
+export const printCommandDetail = (command: string): void => {
+  const name = (command || "").trim();
+  if (!name) {
+    console.log("Please provide a command name.");
+    printAvailableCommands();
+    return;
+  }
+
+  const idx = COMMANDS.indexOf(name);
+  if (idx === -1) {
+    console.log(`Unknown command: ${name}`);
+    printAvailableCommands();
+    return;
+  }
+
+  const info = COMMANDS_INFO[idx] || "No additional information available.";
+  const detail = (COMMANDS_DETAIL[idx] || "").trim();
+
+  console.log(`${name}\n${info}${detail ? `\n${detail}` : ""}`);
+};
