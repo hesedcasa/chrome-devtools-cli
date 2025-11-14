@@ -1,1 +1,1 @@
-export { parseArguments } from "./argParser.js";
+export { parseArguments } from './argParser.js';

@@ -1,7 +1,8 @@
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-import { CallToolResultSchema } from "@modelcontextprotocol/sdk/types.js";
-import { DEFAULT_CHROME_SERVER } from "../config/index.js";
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
+
+import { DEFAULT_CHROME_SERVER } from '../config/index.js';
 
 /**
  * Runs a command in headless mode (non-interactive)
@@ -9,44 +10,37 @@ import { DEFAULT_CHROME_SERVER } from "../config/index.js";
  * @param arg - JSON string or null for the command arguments
  * @param flag - Optional flag (e.g., "--headless")
  */
-export const runCommand = async (
-  command: string,
-  arg: string | null,
-  flag: string | null,
-): Promise<void> => {
+export const runCommand = async (command: string, arg: string | null, flag: string | null): Promise<void> => {
   try {
-    console.log([command, arg, flag].filter(Boolean).join(" "));
+    console.log([command, arg, flag].filter(Boolean).join(' '));
 
     // Prepare client and transport
     const client = new Client(
       {
-        name: "chrome-devtools-cli-headless",
-        version: "1",
+        name: 'chrome-devtools-cli-headless',
+        version: '1',
       },
       {
         capabilities: {},
-      },
+      }
     );
 
     const transport = new StdioClientTransport({
       command: DEFAULT_CHROME_SERVER.command,
       args:
-        flag === "--headless"
-          ? [...DEFAULT_CHROME_SERVER.args, "--headless=true"]
-          : [...DEFAULT_CHROME_SERVER.args],
+        flag === '--headless' ? [...DEFAULT_CHROME_SERVER.args, '--headless=true'] : [...DEFAULT_CHROME_SERVER.args],
     });
 
     await client.connect(transport);
 
-    let argObj: { [key: string]: unknown } =
-      arg && arg.trim() !== "" ? JSON.parse(arg) : {};
+    const argObj: { [key: string]: unknown } = arg && arg.trim() !== '' ? JSON.parse(arg) : {};
 
     const result = await client.callTool(
       {
         name: command,
         arguments: argObj,
       },
-      CallToolResultSchema,
+      CallToolResultSchema
     );
 
     console.log(JSON.stringify(result, null, 2));
@@ -54,8 +48,9 @@ export const runCommand = async (
     await client.close();
 
     process.exit(0);
-  } catch (error: any) {
-    console.error("Error running command:", error?.message ?? error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error running command:', errorMessage);
     process.exit(1);
   }
 };

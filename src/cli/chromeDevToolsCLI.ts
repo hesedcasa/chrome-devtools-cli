@@ -1,13 +1,10 @@
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-import { CallToolResultSchema } from "@modelcontextprotocol/sdk/types.js";
-import readline from "readline";
-import { DEFAULT_CHROME_SERVER } from "../config/index.js";
-import {
-  getCurrentVersion,
-  printAvailableCommands,
-  printCommandDetail,
-} from "../commands/index.js";
+import { Client } from '@modelcontextprotocol/sdk/client/index.js';
+import { StdioClientTransport } from '@modelcontextprotocol/sdk/client/stdio.js';
+import { CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
+import readline from 'readline';
+
+import { getCurrentVersion, printAvailableCommands, printCommandDetail } from '../commands/index.js';
+import { DEFAULT_CHROME_SERVER } from '../config/index.js';
 
 /**
  * Main CLI class for Chrome DevTools interaction
@@ -20,7 +17,7 @@ export class chromeDevToolsCLI {
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
-      prompt: "chrome> ",
+      prompt: 'chrome> ',
     });
   }
 
@@ -34,12 +31,12 @@ export class chromeDevToolsCLI {
 
       this.client = new Client(
         {
-          name: "chrome-devtools-cli",
-          version: "1",
+          name: 'chrome-devtools-cli',
+          version: '1',
         },
         {
           capabilities: {},
-        },
+        }
       );
 
       const transport = new StdioClientTransport({
@@ -51,7 +48,7 @@ export class chromeDevToolsCLI {
 
       this.printHelp();
     } catch (error) {
-      console.error("Failed to connect to MCP server:", error);
+      console.error('Failed to connect to MCP server:', error);
       process.exit(1);
     }
   }
@@ -69,35 +66,35 @@ export class chromeDevToolsCLI {
     }
 
     // Handle special commands
-    if (trimmed === "exit" || trimmed === "quit" || trimmed === "q") {
+    if (trimmed === 'exit' || trimmed === 'quit' || trimmed === 'q') {
       await this.disconnect();
       return;
     }
 
-    if (trimmed === "help" || trimmed === "?") {
+    if (trimmed === 'help' || trimmed === '?') {
       this.printHelp();
       this.rl.prompt();
       return;
     }
 
-    if (trimmed === "commands") {
+    if (trimmed === 'commands') {
       printAvailableCommands();
       this.rl.prompt();
       return;
     }
 
-    if (trimmed === "clear") {
+    if (trimmed === 'clear') {
       console.clear();
       this.rl.prompt();
       return;
     }
 
     // Parse tool invocation: command [args...]
-    const parts = trimmed.split(" ");
+    const parts = trimmed.split(' ');
     const command = parts[0];
     const args = parts.slice(1);
 
-    if (args[0] === "-h") {
+    if (args[0] === '-h') {
       printCommandDetail(command);
       this.rl.prompt();
       return;
@@ -113,28 +110,28 @@ export class chromeDevToolsCLI {
    */
   private async runCommand(command: string, arg: string): Promise<void> {
     if (!this.client) {
-      console.log("MCP server not available!");
+      console.log('MCP server not available!');
       this.rl.prompt();
       return;
     }
 
     try {
-      console.log([command, arg].filter(Boolean).join(" "));
+      console.log([command, arg].filter(Boolean).join(' '));
 
-      let argObj: { [key: string]: unknown } =
-        arg && arg.trim() !== "" ? JSON.parse(arg) : {};
+      const argObj: { [key: string]: unknown } = arg && arg.trim() !== '' ? JSON.parse(arg) : {};
 
       const result = await this.client.callTool(
         {
           name: command,
           arguments: argObj,
         },
-        CallToolResultSchema,
+        CallToolResultSchema
       );
 
       console.log(JSON.stringify(result, null, 2));
-    } catch (error: any) {
-      console.error("Error running command:", error?.message ?? error);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.error('Error running command:', errorMessage);
     }
 
     this.rl.prompt();
@@ -177,29 +174,28 @@ e.g.: >select_page {"pageIdx":1}
   async start(): Promise<void> {
     this.rl.prompt();
 
-    this.rl.on("line", async (line) => {
+    this.rl.on('line', async line => {
       await this.handleCommand(line);
     });
 
-    this.rl.on("close", async () => {
+    this.rl.on('close', async () => {
       await this.client?.close();
       process.exit(0);
     });
 
-    // Handle termination signals (e.g., Ctrl+C, Ctrl+D)
-    const gracefulShutdown = async (signal: string) => {
+    const gracefulShutdown = async () => {
       try {
         await this.disconnect();
       } catch (error) {
-        console.error("Error during shutdown:", error);
+        console.error('Error during shutdown:', error);
       } finally {
         process.exit(0);
       }
     };
 
-    ["SIGINT", "SIGTERM"].forEach((sig) => {
+    ['SIGINT', 'SIGTERM'].forEach(sig => {
       process.on(sig, () => {
-        gracefulShutdown(sig);
+        gracefulShutdown();
       });
     });
   }

@@ -1,10 +1,6 @@
-import { COMMANDS } from "../config/index.js";
-import {
-  getCurrentVersion,
-  printAvailableCommands,
-  printCommandDetail,
-} from "../commands/index.js";
-import { runCommand } from "../commands/index.js";
+import { getCurrentVersion, printAvailableCommands, printCommandDetail } from '../commands/index.js';
+import { runCommand } from '../commands/index.js';
+import { COMMANDS } from '../config/index.js';
 
 /**
  * Parses and handles command line arguments
@@ -14,43 +10,34 @@ import { runCommand } from "../commands/index.js";
 export const parseArguments = async (args: string[]): Promise<boolean> => {
   for (let i = 0; i < args.length; i++) {
     // Version flag
-    if (args[i] === "--version" || args[i] === "-v") {
+    if (args[i] === '--version' || args[i] === '-v') {
       console.log(getCurrentVersion());
       process.exit(0);
     }
 
     // List commands flag
-    if (args[i] === "--commands") {
+    if (args[i] === '--commands') {
       printAvailableCommands();
       process.exit(0);
     }
 
     // Command-specific help
-    if (i === 0 && args.length >= 2 && args[1] === "-h") {
+    if (i === 0 && args.length >= 2 && args[1] === '-h') {
       printCommandDetail(args[0]);
       process.exit(0);
     }
 
     // General help flag
-    if (args[i] === "--help" || args[i] === "-h") {
+    if (args[i] === '--help' || args[i] === '-h') {
       printGeneralHelp();
       process.exit(0);
     }
 
     // Execute command in headless mode
-    if (
-      i === 0 &&
-      args.length >= 1 &&
-      args[1] !== "-h" &&
-      COMMANDS.includes(args[0])
-    ) {
+    if (i === 0 && args.length >= 1 && args[1] !== '-h' && COMMANDS.includes(args[0])) {
       const rest = args.slice(1);
-      const params = (rest.find((a) => !a.startsWith("-")) ?? null) as
-        | string
-        | null;
-      const flag = (rest.find((a) => a.startsWith("-")) ?? null) as
-        | string
-        | null;
+      const params = (rest.find(a => !a.startsWith('-')) ?? null) as string | null;
+      const flag = (rest.find(a => a.startsWith('-')) ?? null) as string | null;
 
       await runCommand(args[0], params, flag);
       process.exit(0);

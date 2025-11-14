@@ -28,34 +28,43 @@ Before releasing, ensure you have:
 We use semantic versioning (MAJOR.MINOR.PATCH):
 
 ### Patch Release (Bug fixes)
+
 ```bash
 npm run release:patch
 ```
+
 Example: `1.0.0` → `1.0.1`
 
 Use for:
+
 - Bug fixes
 - Documentation updates
 - Minor tweaks
 
 ### Minor Release (New features)
+
 ```bash
 npm run release:minor
 ```
+
 Example: `1.0.0` → `1.1.0`
 
 Use for:
+
 - New features
 - Non-breaking changes
 - Feature enhancements
 
 ### Major Release (Breaking changes)
+
 ```bash
 npm run release:major
 ```
+
 Example: `1.0.0` → `2.0.0`
 
 Use for:
+
 - Breaking API changes
 - Major refactors
 - Incompatible changes
@@ -94,6 +103,7 @@ The automated release script (`scripts/release.sh`) performs these steps:
 If you need to release manually:
 
 ### 1. Bump Version
+
 ```bash
 # Choose one:
 npm version patch  # 1.0.0 -> 1.0.1
@@ -102,22 +112,26 @@ npm version major  # 1.0.0 -> 2.0.0
 ```
 
 ### 2. Build
+
 ```bash
 npm run build
 ```
 
 ### 3. Push to GitHub
+
 ```bash
 git push -u origin <branch-name>
 git push --tags
 ```
 
 ### 4. Publish to NPM
+
 ```bash
 npm publish --access public
 ```
 
 ### 5. Create GitHub Release
+
 ```bash
 # Get the new version
 NEW_VERSION=$(node -p "require('./package.json').version")
@@ -136,20 +150,24 @@ gh release create "v$NEW_VERSION" \
    - Add comparison links
 
    Example:
+
    ```markdown
    ## [1.2.0] - 2025-01-13
 
    ### Added
+
    - New feature X
    - New feature Y
 
    ### Fixed
+
    - Bug Z
 
    [1.2.0]: https://github.com/hesedcasa/chrome-devtools-cli/compare/v1.1.0...v1.2.0
    ```
 
 2. **Review Changes**
+
    ```bash
    # See commits since last tag
    git log $(git describe --tags --abbrev=0)..HEAD --oneline
@@ -174,6 +192,7 @@ gh release create "v$NEW_VERSION" \
    - Verify tag is present
 
 3. **Test Installation**
+
    ```bash
    # In a separate directory
    npm install -g chrome-devtools-cli@latest
@@ -188,6 +207,7 @@ gh release create "v$NEW_VERSION" \
 ## Troubleshooting
 
 ### NPM Publish Fails
+
 ```bash
 # Check if logged in
 npm whoami
@@ -200,11 +220,13 @@ export NPM_TOKEN=your-token-here
 ```
 
 ### GitHub Push Fails (403 Error)
+
 - Ensure you have push access to the branch and that your branch name follows your organization's contribution guidelines
 - Check git remote: `git remote -v`
 - Verify GitHub authentication: `git push --dry-run`
 
 ### Git Tag Already Exists
+
 ```bash
 # Delete local tag
 git tag -d v1.0.0
@@ -214,9 +236,11 @@ git push --delete origin v1.0.0
 ```
 
 ### Release Script Fails Mid-way
+
 The script uses `set -e` (exit on error), so it stops at the first failure.
 
 To recover:
+
 1. Fix the issue
 2. Check current version: `npm version`
 3. If version was bumped but not pushed, you can push manually
@@ -274,6 +298,7 @@ jobs:
 ## Support
 
 If you encounter issues with the release process:
+
 1. Check this documentation
 2. Review the script: `scripts/release.sh`
 3. Open an issue: https://github.com/hesedcasa/chrome-devtools-cli/issues
