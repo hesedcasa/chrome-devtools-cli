@@ -127,7 +127,7 @@ while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
     else
         RETRY_COUNT=$((RETRY_COUNT + 1))
         if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
-            log_warning "Push failed, retrying in ${DELAY}s... (attempt $RETRY_COUNT/$MAX_RETRIES)"
+            log_warning "Push failed, retrying in ${DELAY}s... (retry $RETRY_COUNT/$MAX_RETRIES)"
             sleep $DELAY
             DELAY=$((DELAY * 2))
         else
