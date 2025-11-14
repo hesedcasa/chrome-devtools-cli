@@ -5,6 +5,19 @@
 
 set -e  # Exit on error
 
+# Temporary file for cleanup
+TEMP_RELEASE_NOTES=""
+
+# Cleanup function
+cleanup() {
+    if [ -n "$TEMP_RELEASE_NOTES" ] && [ -f "$TEMP_RELEASE_NOTES" ]; then
+        rm -f "$TEMP_RELEASE_NOTES"
+    fi
+}
+
+# Set up trap to ensure cleanup on exit
+trap cleanup EXIT
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -168,7 +181,8 @@ if command -v gh &> /dev/null; then
     fi
 
     # Create release notes file
-    cat > /tmp/release-notes.md << EOF
+    TEMP_RELEASE_NOTES="/tmp/release-notes-$$.md"
+    cat > "$TEMP_RELEASE_NOTES" << EOF
 # Release v$NEW_VERSION
 
 ## Changes
@@ -181,9 +195,8 @@ EOF
 
     gh release create "v$NEW_VERSION" \
         --title "v$NEW_VERSION" \
-        --notes-file /tmp/release-notes.md
+        --notes-file "$TEMP_RELEASE_NOTES"
 
-    rm /tmp/release-notes.md
     log_success "GitHub release created"
 else
     log_warning "GitHub CLI (gh) not found. Skipping GitHub release creation."
