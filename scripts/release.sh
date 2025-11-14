@@ -91,8 +91,9 @@ git fetch origin "$CURRENT_BRANCH" 2>/dev/null || log_warning "Could not fetch f
 # Check if we're behind remote
 LOCAL=$(git rev-parse @)
 REMOTE=$(git rev-parse @{u} 2>/dev/null) || REMOTE=$LOCAL
-if [ "$LOCAL" != "$REMOTE" ]; then
-    log_error "Local branch is not up to date with remote. Please pull latest changes."
+BASE=$(git merge-base @ @{u})
+if [ "$LOCAL" != "$REMOTE" ] && [ "$REMOTE" != "$BASE" ]; then
+    log_error "Local branch is behind remote. Please pull latest changes."
     exit 1
 fi
 log_success "Branch is up to date with remote"
@@ -139,7 +140,7 @@ while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
     else
         RETRY_COUNT=$((RETRY_COUNT + 1))
         if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
-            log_warning "Push failed, retrying in ${DELAY}s... (attempt $RETRY_COUNT/$MAX_RETRIES)"
+            log_warning "Push failed, retrying in ${DELAY}s... (retry $RETRY_COUNT/$MAX_RETRIES)"
             sleep $DELAY
             DELAY=$((DELAY * 2))
         else
@@ -181,8 +182,8 @@ if command -v gh &> /dev/null; then
     fi
 
     # Create release notes file
-    TEMP_RELEASE_NOTES="/tmp/release-notes-$$.md"
-    cat > "$TEMP_RELEASE_NOTES" << EOF
+    NOTES_FILE=$(mktemp)
+    cat > "$NOTES_FILE" << EOF
 # Release v$NEW_VERSION
 
 ## Changes
@@ -195,8 +196,9 @@ EOF
 
     gh release create "v$NEW_VERSION" \
         --title "v$NEW_VERSION" \
-        --notes-file "$TEMP_RELEASE_NOTES"
+        --notes-file "$NOTES_FILE"
 
+    rm "$NOTES_FILE"
     log_success "GitHub release created"
 else
     log_warning "GitHub CLI (gh) not found. Skipping GitHub release creation."
