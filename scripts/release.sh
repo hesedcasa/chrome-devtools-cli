@@ -5,6 +5,19 @@
 
 set -e  # Exit on error
 
+# Temporary file for cleanup
+TEMP_RELEASE_NOTES=""
+
+# Cleanup function
+cleanup() {
+    if [ -n "$TEMP_RELEASE_NOTES" ] && [ -f "$TEMP_RELEASE_NOTES" ]; then
+        rm -f "$TEMP_RELEASE_NOTES"
+    fi
+}
+
+# Set up trap to ensure cleanup on exit
+trap cleanup EXIT
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
