@@ -76,7 +76,7 @@ The automated release script (`scripts/release.sh`) performs these steps:
 
 3. **Version Bump**
    - ✓ Updates `package.json` version
-   - ✓ Creates a git commit with message "Release vX.Y.Z"
+   - ✓ Creates a git commit with message "Release v<version>" (e.g., "Release v1.2.3")
    - ✓ Creates a git tag `vX.Y.Z`
 
 4. **Publish**
