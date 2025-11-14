@@ -78,8 +78,9 @@ git fetch origin "$CURRENT_BRANCH" 2>/dev/null || log_warning "Could not fetch f
 # Check if we're behind remote
 LOCAL=$(git rev-parse @)
 REMOTE=$(git rev-parse @{u} 2>/dev/null) || REMOTE=$LOCAL
-if [ "$LOCAL" != "$REMOTE" ]; then
-    log_error "Local branch is not up to date with remote. Please pull latest changes."
+BASE=$(git merge-base @ @{u})
+if [ "$LOCAL" != "$REMOTE" ] && [ "$REMOTE" != "$BASE" ]; then
+    log_error "Local branch is behind remote. Please pull latest changes."
     exit 1
 fi
 log_success "Branch is up to date with remote"
