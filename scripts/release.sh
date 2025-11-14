@@ -95,7 +95,7 @@ npm run build
 log_success "Build completed"
 
 # Run tests if test script exists
-if npm run | grep -q "test"; then
+if npm run 2>&1 | grep -q "^  test$"; then
     log_info "Running tests..."
     npm test
     log_success "Tests passed"
