@@ -139,7 +139,10 @@ done
 # Publish to NPM
 log_info "Publishing to NPM..."
 if [ -n "$NPM_TOKEN" ]; then
-    echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+    NPMRC_LINE="//registry.npmjs.org/:_authToken=$NPM_TOKEN"
+    if ! grep -Fxq "$NPMRC_LINE" ~/.npmrc 2>/dev/null; then
+        echo "$NPMRC_LINE" >> ~/.npmrc
+    fi
 fi
 
 # Check if user is logged in to npm
