@@ -49,11 +49,13 @@ src/
 ### Core Components
 
 #### Entry Point (`src/index.ts`)
+
 - Bootstraps the application
 - Parses command-line arguments
 - Routes to interactive or headless mode
 
 #### CLI Module (`src/cli/`)
+
 - **chromeDevToolsCLI class**: Main orchestrator managing:
   - `connect()` - Establishes MCP server connection using `@modelcontextprotocol/sdk` client and stdio transport
   - `start()` - Initiates interactive REPL with readline interface
@@ -62,6 +64,7 @@ src/
   - `disconnect()` - Graceful cleanup on exit signals (SIGINT/SIGTERM)
 
 #### Commands Module (`src/commands/`)
+
 - `helpers.ts` - Display command information and help
   - `printAvailableCommands()` - Lists all 26 available commands
   - `printCommandDetail(command)` - Shows detailed help for specific command
@@ -69,6 +72,7 @@ src/
   - `runCommand(command, arg, flag)` - Non-interactive command execution
 
 #### Config Module (`src/config/`)
+
 - `constants.ts` - Centralized configuration
   - `DEFAULT_CHROME_SERVER` - MCP server connection settings
   - `COMMANDS[]` - Array of 26 available command names
@@ -76,10 +80,12 @@ src/
   - `COMMANDS_DETAIL[]` - Detailed parameter documentation
 
 #### Utils Module (`src/utils/`)
+
 - `argParser.ts` - Command-line argument handling
   - `parseArguments(args)` - Parses CLI flags and routes execution
 
 #### Types Module (`src/types/`)
+
 - Shared TypeScript interfaces and type definitions
 
 ### MCP Client Integration
@@ -161,33 +167,39 @@ npx chrome-devtools-cli --version         # Show version
 ## Code Structure & Module Responsibilities
 
 ### Entry Point (`index.ts`)
+
 - Minimal bootstrapper
 - Imports and coordinates other modules
 - Handles top-level error catching
 
 ### CLI Class (`cli/chromeDevToolsCLI.ts`)
+
 - Interactive REPL management
 - MCP server connection lifecycle
 - User command processing
 - Tool execution with result formatting
 
 ### Command Helpers (`commands/helpers.ts`)
+
 - Pure functions for displaying command information
 - No external dependencies except config
 - Easy to test
 
 ### Command Runner (`commands/runner.ts`)
+
 - Headless/non-interactive execution
 - Single command → result → exit pattern
 - Independent MCP client instance
 
 ### Constants (`config/constants.ts`)
+
 - Single source of truth for all configuration
 - Command definitions (names, descriptions, parameters)
 - Server connection settings
 - No logic, just data
 
 ### Argument Parser (`utils/argParser.ts`)
+
 - CLI flag parsing (--help, --version, --commands, etc.)
 - Routing logic for different execution modes
 - Command detection and validation
@@ -205,9 +217,11 @@ npx chrome-devtools-cli --version         # Show version
 ## Dependencies
 
 **Runtime**:
+
 - `@modelcontextprotocol/sdk@^1.0.0` - Official MCP client SDK
 
 **Development**:
+
 - `typescript@^5.0.0` - TypeScript compiler
 - `tsx@^4.0.0` - TypeScript execution runtime
 - `@types/node@^20.0.0` - Node.js type definitions
@@ -215,7 +229,9 @@ npx chrome-devtools-cli --version         # Show version
 ## Testing and Verification
 
 ### Manual Testing
+
 Key verified features:
+
 - ✅ CLI connection to MCP server
 - ✅ All 26 tools discoverable
 - ✅ Interactive REPL functionality
@@ -225,6 +241,7 @@ Key verified features:
 - ✅ All CLI flags working
 
 ### Recommended Test Structure
+
 ```
 tests/
 ├── unit/
@@ -249,29 +266,34 @@ tests/
 ## Development Tips
 
 ### Adding a New Command
+
 1. Add command name to `COMMANDS` array in `config/constants.ts`
 2. Add description to `COMMANDS_INFO` array (same index)
 3. Add parameter details to `COMMANDS_DETAIL` array (same index)
 4. Done! The CLI will automatically discover it
 
 ### Adding a New CLI Flag
+
 1. Edit `utils/argParser.ts`
 2. Add flag detection in the `parseArguments()` function
 3. Implement the flag's behavior
 4. Update help text if needed
 
 ### Modifying CLI Behavior
+
 1. Interactive mode logic: `cli/chromeDevToolsCLI.ts`
 2. Headless mode logic: `commands/runner.ts`
 3. Argument routing: `utils/argParser.ts`
 
 ### Working with Modules
+
 - Each module is self-contained and independently testable
 - Use barrel exports for clean imports: `import { X } from './module/index.js'`
 - Follow single responsibility principle - one concern per file
 - Keep dependencies flowing in one direction (no circular dependencies)
 
 ### Building and Testing
+
 ```bash
 # Clean build
 rm -rf dist && npm run build
@@ -288,6 +310,7 @@ node dist/index.js navigate_page -h
 ### Common Patterns
 
 **Importing from modules:**
+
 ```typescript
 import { chromeDevToolsCLI } from './cli/index.js';
 import { COMMANDS, DEFAULT_CHROME_SERVER } from './config/index.js';
@@ -295,23 +318,25 @@ import { parseArguments } from './utils/index.js';
 ```
 
 **Error handling:**
+
 ```typescript
 try {
   // Operation
 } catch (error: any) {
-  console.error("Error:", error.message || error);
+  console.error('Error:', error.message || error);
   process.exit(1);
 }
 ```
 
 **MCP tool call:**
+
 ```typescript
 const result = await this.client.callTool(
   {
     name: toolName,
     arguments: arguments_,
   },
-  CallToolResultSchema,
+  CallToolResultSchema
 );
 ```
 
@@ -325,6 +350,7 @@ const result = await this.client.callTool(
 ## Future Enhancements
 
 Consider adding:
+
 - Unit tests for each module
 - Integration tests with mocked MCP server
 - CI/CD pipeline

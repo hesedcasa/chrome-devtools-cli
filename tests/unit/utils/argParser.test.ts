@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { parseArguments } from '../../../src/utils/argParser.js';
 
 // Mock the dependencies
@@ -14,12 +15,14 @@ vi.mock('../../../src/config/index.js', () => ({
 }));
 
 describe('argParser', () => {
-  let consoleLogSpy: any;
-  let processExitSpy: any;
+  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
+  let processExitSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-    processExitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as any);
+    processExitSpy = vi
+      .spyOn(process, 'exit')
+      .mockImplementation((() => {}) as unknown as (...args: unknown[]) => never);
   });
 
   afterEach(() => {
@@ -84,11 +87,7 @@ describe('argParser', () => {
 
       await parseArguments(['navigate_page', '{"url": "https://google.com"}']);
 
-      expect(runCommand).toHaveBeenCalledWith(
-        'navigate_page',
-        '{"url": "https://google.com"}',
-        null
-      );
+      expect(runCommand).toHaveBeenCalledWith('navigate_page', '{"url": "https://google.com"}', null);
       expect(processExitSpy).toHaveBeenCalledWith(0);
     });
 
@@ -97,11 +96,7 @@ describe('argParser', () => {
 
       await parseArguments(['navigate_page', '--headless', '{"url": "https://google.com"}']);
 
-      expect(runCommand).toHaveBeenCalledWith(
-        'navigate_page',
-        '{"url": "https://google.com"}',
-        '--headless'
-      );
+      expect(runCommand).toHaveBeenCalledWith('navigate_page', '{"url": "https://google.com"}', '--headless');
       expect(processExitSpy).toHaveBeenCalledWith(0);
     });
 

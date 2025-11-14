@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import { chromeDevToolsCLI } from "./cli/index.js";
-import { parseArguments } from "./utils/index.js";
+import { chromeDevToolsCLI } from './cli/index.js';
+import { parseArguments } from './utils/index.js';
 
 /**
  * Main entry point for the Chrome DevTools CLI
@@ -22,7 +22,7 @@ async function main(): Promise<void> {
 }
 
 // Run the CLI
-main().catch((error) => {
-  console.error("Fatal error:", error);
+main().catch(error => {
+  console.error('Fatal error:', error);
   process.exit(1);
 });

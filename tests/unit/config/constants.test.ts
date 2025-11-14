@@ -1,10 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import {
-  DEFAULT_CHROME_SERVER,
-  COMMANDS,
-  COMMANDS_INFO,
-  COMMANDS_DETAIL,
-} from '../../../src/config/constants.js';
+import { describe, expect, it } from 'vitest';
+
+import { COMMANDS, COMMANDS_DETAIL, COMMANDS_INFO, DEFAULT_CHROME_SERVER } from '../../../src/config/constants.js';
 
 describe('config/constants', () => {
   describe('DEFAULT_CHROME_SERVER', () => {
@@ -89,7 +85,7 @@ describe('config/constants', () => {
     });
 
     it('should have all lowercase snake_case commands', () => {
-      COMMANDS.forEach((cmd) => {
+      COMMANDS.forEach(cmd => {
         expect(cmd).toMatch(/^[a-z_]+$/);
       });
     });
@@ -109,7 +105,7 @@ describe('config/constants', () => {
     });
 
     it('should have non-empty strings for all descriptions', () => {
-      COMMANDS_INFO.forEach((info, idx) => {
+      COMMANDS_INFO.forEach(info => {
         expect(typeof info).toBe('string');
         expect(info.length).toBeGreaterThan(0);
       });
@@ -140,7 +136,7 @@ describe('config/constants', () => {
     });
 
     it('should have strings for all details', () => {
-      COMMANDS_DETAIL.forEach((detail) => {
+      COMMANDS_DETAIL.forEach(detail => {
         expect(typeof detail).toBe('string');
       });
     });

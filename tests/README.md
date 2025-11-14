@@ -42,6 +42,7 @@ npm run test:coverage
 ### Unit Tests
 
 #### `utils/argParser.test.ts` (12 tests)
+
 - Version flags (`--version`, `-v`)
 - Commands listing (`--commands`)
 - Help flags (`--help`, `-h`)
@@ -50,6 +51,7 @@ npm run test:coverage
 - Argument parsing and flag handling
 
 #### `config/constants.test.ts` (26 tests)
+
 - `DEFAULT_CHROME_SERVER` configuration
 - `COMMANDS` array structure and content
 - `COMMANDS_INFO` descriptions
@@ -57,6 +59,7 @@ npm run test:coverage
 - Array alignment and consistency
 
 #### `commands/helpers.test.ts` (20 tests)
+
 - `getCurrentVersion()` function
 - `printAvailableCommands()` output
 - `printCommandDetail()` for valid/invalid commands
@@ -64,6 +67,7 @@ npm run test:coverage
 - Empty input handling
 
 #### `commands/runner.test.ts` (15 tests)
+
 - Headless command execution
 - JSON argument parsing
 - `--headless` flag handling
@@ -73,6 +77,7 @@ npm run test:coverage
 ### Integration Tests
 
 #### `cli/chromeDevToolsCLI.test.ts` (20 tests)
+
 - Constructor and readline interface setup
 - MCP server connection
 - REPL command handling:
@@ -128,7 +133,7 @@ When adding new features, follow these patterns:
 ### Example Test Structure
 
 ```typescript
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('MyModule', () => {
   beforeEach(() => {
@@ -163,6 +168,7 @@ npm run test:watch
 ```
 
 This will:
+
 - Re-run tests when source or test files change
 - Show only failed tests by default
 - Provide an interactive menu for filtering tests
@@ -170,6 +176,7 @@ This will:
 ## Coverage Goals
 
 Current test coverage focuses on:
+
 - ✅ All exported functions
 - ✅ Error paths and edge cases
 - ✅ Command parsing and validation
@@ -184,6 +191,7 @@ Current test coverage focuses on:
 ## Contributing
 
 When adding tests:
+
 1. Ensure all tests pass: `npm test`
 2. Maintain or improve coverage: `npm run test:coverage`
 3. Follow existing patterns and structure

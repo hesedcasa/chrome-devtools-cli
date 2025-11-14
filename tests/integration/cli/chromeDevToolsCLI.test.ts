@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { chromeDevToolsCLI } from '../../../src/cli/chromeDevToolsCLI.js';
-import type { Interface as ReadlineInterface } from 'readline';
 
 // Mock readline
 const mockPrompt = vi.fn();
@@ -23,11 +23,13 @@ const mockCallTool = vi.fn();
 const mockClientClose = vi.fn();
 
 vi.mock('@modelcontextprotocol/sdk/client/index.js', () => ({
-  Client: vi.fn().mockImplementation(() => ({
-    connect: mockConnect,
-    callTool: mockCallTool,
-    close: mockClientClose,
-  })),
+  Client: vi.fn(function () {
+    return {
+      connect: mockConnect,
+      callTool: mockCallTool,
+      close: mockClientClose,
+    };
+  }),
 }));
 
 vi.mock('@modelcontextprotocol/sdk/client/stdio.js', () => ({
@@ -46,17 +48,19 @@ vi.mock('../../../src/commands/index.js', () => ({
 }));
 
 describe('cli/chromeDevToolsCLI (Integration)', () => {
-  let consoleLogSpy: any;
-  let consoleErrorSpy: any;
-  let consoleClearSpy: any;
-  let processExitSpy: any;
-  let processOnSpy: any;
+  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+  let consoleClearSpy: ReturnType<typeof vi.spyOn>;
+  let processExitSpy: ReturnType<typeof vi.spyOn>;
+  let processOnSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     consoleClearSpy = vi.spyOn(console, 'clear').mockImplementation(() => {});
-    processExitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as any);
+    processExitSpy = vi
+      .spyOn(process, 'exit')
+      .mockImplementation((() => {}) as unknown as (...args: unknown[]) => never);
     processOnSpy = vi.spyOn(process, 'on').mockImplementation(() => process);
 
     // Reset mocks
@@ -97,7 +101,7 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
       const cli = new chromeDevToolsCLI();
       await cli.connect();
 
-      const allCalls = consoleLogSpy.mock.calls.map((call) => call[0]).join(' ');
+      const allCalls = consoleLogSpy.mock.calls.map(call => call[0]).join(' ');
       expect(allCalls).toContain('Chrome DevTools CLI');
     });
 
@@ -110,10 +114,7 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
       // So we don't expect it to throw, but to handle the error gracefully
       await cli.connect();
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Failed to connect to MCP server:',
-        expect.any(Error)
-      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to connect to MCP server:', expect.any(Error));
       expect(processExitSpy).toHaveBeenCalledWith(1);
     });
   });
@@ -144,8 +145,8 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
 
   describe('command handling', () => {
     it('should handle help command', async () => {
-      let lineHandler: any;
-      mockOn.mockImplementation((event: string, handler: any) => {
+      let lineHandler: ((line: string) => Promise<void>) | null = null;
+      mockOn.mockImplementation((event: string, handler: (line: string) => Promise<void>) => {
         if (event === 'line') {
           lineHandler = handler;
         }
@@ -160,18 +161,16 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
 
       await lineHandler('help');
 
-      const allCalls = consoleLogSpy.mock.calls.map((call) => call[0]).join(' ');
+      const allCalls = consoleLogSpy.mock.calls.map(call => call[0]).join(' ');
       expect(allCalls).toContain('Chrome DevTools CLI');
       expect(mockPrompt).toHaveBeenCalled();
     });
 
     it('should handle commands command', async () => {
-      const { printAvailableCommands } = await import(
-        '../../../src/commands/index.js'
-      );
+      const { printAvailableCommands } = await import('../../../src/commands/index.js');
 
-      let lineHandler: any;
-      mockOn.mockImplementation((event: string, handler: any) => {
+      let lineHandler: ((line: string) => Promise<void>) | null = null;
+      mockOn.mockImplementation((event: string, handler: (line: string) => Promise<void>) => {
         if (event === 'line') {
           lineHandler = handler;
         }
@@ -190,8 +189,8 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
     });
 
     it('should handle clear command', async () => {
-      let lineHandler: any;
-      mockOn.mockImplementation((event: string, handler: any) => {
+      let lineHandler: ((line: string) => Promise<void>) | null = null;
+      mockOn.mockImplementation((event: string, handler: (line: string) => Promise<void>) => {
         if (event === 'line') {
           lineHandler = handler;
         }
@@ -210,8 +209,8 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
     });
 
     it('should handle empty input', async () => {
-      let lineHandler: any;
-      mockOn.mockImplementation((event: string, handler: any) => {
+      let lineHandler: ((line: string) => Promise<void>) | null = null;
+      mockOn.mockImplementation((event: string, handler: (line: string) => Promise<void>) => {
         if (event === 'line') {
           lineHandler = handler;
         }
@@ -230,8 +229,8 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
     });
 
     it('should handle whitespace input', async () => {
-      let lineHandler: any;
-      mockOn.mockImplementation((event: string, handler: any) => {
+      let lineHandler: ((line: string) => Promise<void>) | null = null;
+      mockOn.mockImplementation((event: string, handler: (line: string) => Promise<void>) => {
         if (event === 'line') {
           lineHandler = handler;
         }
@@ -250,8 +249,8 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
     });
 
     it('should handle exit command', async () => {
-      let lineHandler: any;
-      mockOn.mockImplementation((event: string, handler: any) => {
+      let lineHandler: ((line: string) => Promise<void>) | null = null;
+      mockOn.mockImplementation((event: string, handler: (line: string) => Promise<void>) => {
         if (event === 'line') {
           lineHandler = handler;
         }
@@ -267,8 +266,8 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
     });
 
     it('should handle quit command', async () => {
-      let lineHandler: any;
-      mockOn.mockImplementation((event: string, handler: any) => {
+      let lineHandler: ((line: string) => Promise<void>) | null = null;
+      mockOn.mockImplementation((event: string, handler: (line: string) => Promise<void>) => {
         if (event === 'line') {
           lineHandler = handler;
         }
@@ -284,8 +283,8 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
     });
 
     it('should handle q command', async () => {
-      let lineHandler: any;
-      mockOn.mockImplementation((event: string, handler: any) => {
+      let lineHandler: ((line: string) => Promise<void>) | null = null;
+      mockOn.mockImplementation((event: string, handler: (line: string) => Promise<void>) => {
         if (event === 'line') {
           lineHandler = handler;
         }
@@ -303,8 +302,8 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
     it('should handle command with -h flag', async () => {
       const { printCommandDetail } = await import('../../../src/commands/index.js');
 
-      let lineHandler: any;
-      mockOn.mockImplementation((event: string, handler: any) => {
+      let lineHandler: ((line: string) => Promise<void>) | null = null;
+      mockOn.mockImplementation((event: string, handler: (line: string) => Promise<void>) => {
         if (event === 'line') {
           lineHandler = handler;
         }
@@ -321,8 +320,8 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
     });
 
     it('should execute tool command with arguments', async () => {
-      let lineHandler: any;
-      mockOn.mockImplementation((event: string, handler: any) => {
+      let lineHandler: ((line: string) => Promise<void>) | null = null;
+      mockOn.mockImplementation((event: string, handler: (line: string) => Promise<void>) => {
         if (event === 'line') {
           lineHandler = handler;
         }
@@ -346,8 +345,8 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
     });
 
     it('should execute tool command without arguments', async () => {
-      let lineHandler: any;
-      mockOn.mockImplementation((event: string, handler: any) => {
+      let lineHandler: ((line: string) => Promise<void>) | null = null;
+      mockOn.mockImplementation((event: string, handler: (line: string) => Promise<void>) => {
         if (event === 'line') {
           lineHandler = handler;
         }
@@ -373,8 +372,8 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
     it('should handle tool execution errors', async () => {
       mockCallTool.mockRejectedValue(new Error('Tool failed'));
 
-      let lineHandler: any;
-      mockOn.mockImplementation((event: string, handler: any) => {
+      let lineHandler: ((line: string) => Promise<void>) | null = null;
+      mockOn.mockImplementation((event: string, handler: (line: string) => Promise<void>) => {
         if (event === 'line') {
           lineHandler = handler;
         }
@@ -388,17 +387,14 @@ describe('cli/chromeDevToolsCLI (Integration)', () => {
 
       await lineHandler('list_pages');
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Error running command:',
-        'Tool failed'
-      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error running command:', 'Tool failed');
     });
 
     it('should continue REPL after tool error', async () => {
       mockCallTool.mockRejectedValue(new Error('Tool failed'));
 
-      let lineHandler: any;
-      mockOn.mockImplementation((event: string, handler: any) => {
+      let lineHandler: ((line: string) => Promise<void>) | null = null;
+      mockOn.mockImplementation((event: string, handler: (line: string) => Promise<void>) => {
         if (event === 'line') {
           lineHandler = handler;
         }

@@ -18,7 +18,10 @@
     "release:patch": "bash scripts/release.sh patch",
     "release:minor": "bash scripts/release.sh minor",
     "release:major": "bash scripts/release.sh major",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "find-deadcode": "ts-prune",
+    "format": "eslint --cache --fix --quiet . && prettier --write --cache .",
+    "pre-commit": "npm run format && npm run find-deadcode"
   },
   "keywords": [
     "chrome-devtools-cli",
@@ -32,12 +35,20 @@
     "@modelcontextprotocol/sdk": "^1.0.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@trivago/prettier-plugin-sort-imports": "^6.0.0",
     "@types/node": "^20.0.0",
-    "@vitest/coverage-v8": "^2.0.0",
-    "@vitest/ui": "^2.0.0",
+    "@vitest/coverage-v8": "^4.0.9",
+    "@vitest/ui": "^4.0.9",
+    "eslint": "^9.39.1",
+    "globals": "^16.5.0",
+    "jiti": "^2.6.1",
+    "prettier": "3.6.2",
+    "ts-prune": "^0.10.3",
     "tsx": "^4.0.0",
     "typescript": "^5.0.0",
-    "vitest": "^2.0.0"
+    "typescript-eslint": "^8.46.4",
+    "vitest": "^4.0.9"
   },
   "repository": {
     "type": "git",

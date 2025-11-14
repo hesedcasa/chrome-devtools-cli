@@ -1,10 +1,10 @@
-import { COMMANDS, COMMANDS_INFO, COMMANDS_DETAIL } from "../config/index.js";
+import { COMMANDS, COMMANDS_DETAIL, COMMANDS_INFO } from '../config/index.js';
 
 /**
  * Prints all available commands with their descriptions
  */
 export const printAvailableCommands = (): void => {
-  console.log("\nAvailable commands:");
+  console.log('\nAvailable commands:');
   COMMANDS.forEach((name, i) => {
     const info = COMMANDS_INFO[i];
     console.log(`${i + 1}. ${name}: ${info}`);
@@ -16,9 +16,9 @@ export const printAvailableCommands = (): void => {
  * @param command - The command name to get details for
  */
 export const printCommandDetail = (command: string): void => {
-  const name = (command || "").trim();
+  const name = (command || '').trim();
   if (!name) {
-    console.log("Please provide a command name.");
+    console.log('Please provide a command name.');
     printAvailableCommands();
     return;
   }
@@ -30,12 +30,12 @@ export const printCommandDetail = (command: string): void => {
     return;
   }
 
-  const info = COMMANDS_INFO[idx] || "No additional information available.";
-  const detail = (COMMANDS_DETAIL[idx] || "").trim();
+  const info = COMMANDS_INFO[idx] || 'No additional information available.';
+  const detail = (COMMANDS_DETAIL[idx] || '').trim();
 
-  console.log(`${name}\n${info}${detail ? `\n${detail}` : ""}`);
+  console.log(`${name}\n${info}${detail ? `\n${detail}` : ''}`);
 };
 
 export const getCurrentVersion = (): string => {
-  return "1.1.1";
+  return '1.1.2';
 };

@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
 import { runCommand } from '../../../src/commands/runner.js';
 
 // Mock the MCP SDK
@@ -7,11 +8,13 @@ const mockCallTool = vi.fn();
 const mockClose = vi.fn();
 
 vi.mock('@modelcontextprotocol/sdk/client/index.js', () => ({
-  Client: vi.fn().mockImplementation(() => ({
-    connect: mockConnect,
-    callTool: mockCallTool,
-    close: mockClose,
-  })),
+  Client: vi.fn(function () {
+    return {
+      connect: mockConnect,
+      callTool: mockCallTool,
+      close: mockClose,
+    };
+  }),
 }));
 
 vi.mock('@modelcontextprotocol/sdk/client/stdio.js', () => ({
@@ -23,14 +26,16 @@ vi.mock('@modelcontextprotocol/sdk/types.js', () => ({
 }));
 
 describe('commands/runner', () => {
-  let consoleLogSpy: any;
-  let consoleErrorSpy: any;
-  let processExitSpy: any;
+  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+  let processExitSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    processExitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as any);
+    processExitSpy = vi
+      .spyOn(process, 'exit')
+      .mockImplementation((() => {}) as unknown as (...args: unknown[]) => never);
 
     // Reset mock implementations
     mockConnect.mockResolvedValue(undefined);
@@ -74,9 +79,7 @@ describe('commands/runner', () => {
     });
 
     it('should execute command with --headless flag', async () => {
-      const { StdioClientTransport } = await import(
-        '@modelcontextprotocol/sdk/client/stdio.js'
-      );
+      const { StdioClientTransport } = await import('@modelcontextprotocol/sdk/client/stdio.js');
 
       await runCommand('list_pages', null, '--headless');
 
@@ -89,9 +92,7 @@ describe('commands/runner', () => {
     });
 
     it('should execute command without --headless flag', async () => {
-      const { StdioClientTransport } = await import(
-        '@modelcontextprotocol/sdk/client/stdio.js'
-      );
+      const { StdioClientTransport } = await import('@modelcontextprotocol/sdk/client/stdio.js');
 
       await runCommand('list_pages', null, null);
 
@@ -105,9 +106,7 @@ describe('commands/runner', () => {
     it('should log command and arguments', async () => {
       await runCommand('navigate_page', '{"url": "https://google.com"}', null);
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
-        'navigate_page {"url": "https://google.com"}'
-      );
+      expect(consoleLogSpy).toHaveBeenCalledWith('navigate_page {"url": "https://google.com"}');
     });
 
     it('should log result as JSON', async () => {
@@ -116,9 +115,7 @@ describe('commands/runner', () => {
 
       await runCommand('list_pages', null, null);
 
-      expect(consoleLogSpy).toHaveBeenCalledWith(
-        JSON.stringify(mockResult, null, 2)
-      );
+      expect(consoleLogSpy).toHaveBeenCalledWith(JSON.stringify(mockResult, null, 2));
     });
 
     it('should handle connection errors', async () => {
@@ -126,10 +123,7 @@ describe('commands/runner', () => {
 
       await runCommand('list_pages', null, null);
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Error running command:',
-        'Connection failed'
-      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error running command:', 'Connection failed');
       expect(processExitSpy).toHaveBeenCalledWith(1);
     });
 
@@ -138,10 +132,7 @@ describe('commands/runner', () => {
 
       await runCommand('navigate_page', '{"url": "invalid"}', null);
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Error running command:',
-        'Tool execution failed'
-      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error running command:', 'Tool execution failed');
       expect(processExitSpy).toHaveBeenCalledWith(1);
     });
 
@@ -219,10 +210,7 @@ describe('commands/runner', () => {
 
       await runCommand('list_pages', null, null);
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        'Error running command:',
-        'Plain error string'
-      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error running command:', 'Plain error string');
       expect(processExitSpy).toHaveBeenCalledWith(1);
     });
   });
