@@ -5,8 +5,13 @@ tsconfig.json
 # Development files
 .git/
 .gitignore
-*.md
 CLAUDE.md
+RELEASE.md
+scripts/
+
+# Include these important files (override *.md)
+!README.md
+!CHANGELOG.md
 
 # Dependencies
 node_modules/
