@@ -169,7 +169,8 @@ if command -v gh &> /dev/null; then
     fi
 
     # Create release notes file
-    cat > /tmp/release-notes.md << EOF
+    NOTES_FILE=$(mktemp)
+    cat > "$NOTES_FILE" << EOF
 # Release v$NEW_VERSION
 
 ## Changes
@@ -182,9 +183,9 @@ EOF
 
     gh release create "v$NEW_VERSION" \
         --title "v$NEW_VERSION" \
-        --notes-file /tmp/release-notes.md
+        --notes-file "$NOTES_FILE"
 
-    rm /tmp/release-notes.md
+    rm "$NOTES_FILE"
     log_success "GitHub release created"
 else
     log_warning "GitHub CLI (gh) not found. Skipping GitHub release creation."
