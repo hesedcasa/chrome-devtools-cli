@@ -200,7 +200,7 @@ export NPM_TOKEN=your-token-here
 ```
 
 ### GitHub Push Fails (403 Error)
-- Ensure branch name starts with `claude/` and ends with session ID
+- Ensure you have push access to the branch and that your branch name follows your organization's contribution guidelines
 - Check git remote: `git remote -v`
 - Verify GitHub authentication: `git push --dry-run`
 
