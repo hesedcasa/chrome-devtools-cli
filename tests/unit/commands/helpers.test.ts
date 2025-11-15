@@ -21,7 +21,7 @@ describe('commands/helpers', () => {
 
     it('should return specific version', () => {
       const version = getCurrentVersion();
-      expect(version).toBe('1.1.1');
+      expect(version).toBe('1.1.2');
     });
 
     it('should return version in semver format', () => {
