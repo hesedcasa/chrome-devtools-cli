@@ -37,5 +37,9 @@ export const printCommandDetail = (command: string): void => {
 };
 
 export const getCurrentVersion = (): string => {
-  return '1.1.2';
+  // If moved update release-please config
+  // x-release-please-start-version
+  const VERSION = '1.1.2';
+  // x-release-please-end
+  return VERSION;
 };
