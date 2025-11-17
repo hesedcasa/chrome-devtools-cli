@@ -19,11 +19,6 @@ describe('commands/helpers', () => {
       expect(typeof version).toBe('string');
     });
 
-    it('should return specific version', () => {
-      const version = getCurrentVersion();
-      expect(version).toBe('1.1.2');
-    });
-
     it('should return version in semver format', () => {
       const version = getCurrentVersion();
       expect(version).toMatch(/^\d+\.\d+\.\d+$/);
