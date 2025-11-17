@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🎉 Features
 
-* **commands:** add automatic snapshot before interactive commands ([2d7fd1c](https://github.com/hesedcasa/chrome-devtools-cli/commit/2d7fd1c023dcd70966ea53f49cb692dc951db75a))
 * **commands:** add automatic snapshot before interactive commands ([c950b11](https://github.com/hesedcasa/chrome-devtools-cli/commit/c950b119514e52aa923a88b9776a3e8bf58ce543))
 
 ## [1.1.2] - 2025-11-14
