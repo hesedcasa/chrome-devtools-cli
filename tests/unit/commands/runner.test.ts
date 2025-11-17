@@ -213,5 +213,149 @@ describe('commands/runner', () => {
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error running command:', 'Plain error string');
       expect(processExitSpy).toHaveBeenCalledWith(1);
     });
+
+    describe('snapshot-requiring commands', () => {
+      it('should call take_snapshot before click command', async () => {
+        await runCommand('click', '{"uid": "element-1"}', null);
+
+        expect(mockCallTool).toHaveBeenCalledTimes(2);
+        expect(mockCallTool).toHaveBeenNthCalledWith(
+          1,
+          {
+            name: 'take_snapshot',
+            arguments: {},
+          },
+          {}
+        );
+        expect(mockCallTool).toHaveBeenNthCalledWith(
+          2,
+          {
+            name: 'click',
+            arguments: { uid: 'element-1' },
+          },
+          {}
+        );
+      });
+
+      it('should call take_snapshot before drag command', async () => {
+        await runCommand('drag', '{"from_uid": "1", "to_uid": "2"}', null);
+
+        expect(mockCallTool).toHaveBeenCalledTimes(2);
+        expect(mockCallTool).toHaveBeenNthCalledWith(1, { name: 'take_snapshot', arguments: {} }, {});
+        expect(mockCallTool).toHaveBeenNthCalledWith(
+          2,
+          { name: 'drag', arguments: { from_uid: '1', to_uid: '2' } },
+          {}
+        );
+      });
+
+      it('should call take_snapshot before fill command', async () => {
+        await runCommand('fill', '{"uid": "input-1", "value": "test"}', null);
+
+        expect(mockCallTool).toHaveBeenCalledTimes(2);
+        expect(mockCallTool).toHaveBeenNthCalledWith(1, { name: 'take_snapshot', arguments: {} }, {});
+        expect(mockCallTool).toHaveBeenNthCalledWith(
+          2,
+          { name: 'fill', arguments: { uid: 'input-1', value: 'test' } },
+          {}
+        );
+      });
+
+      it('should call take_snapshot before fill_form command', async () => {
+        await runCommand('fill_form', '{"elements": [{"uid": "1", "value": "test"}]}', null);
+
+        expect(mockCallTool).toHaveBeenCalledTimes(2);
+        expect(mockCallTool).toHaveBeenNthCalledWith(1, { name: 'take_snapshot', arguments: {} }, {});
+        expect(mockCallTool).toHaveBeenNthCalledWith(
+          2,
+          { name: 'fill_form', arguments: { elements: [{ uid: '1', value: 'test' }] } },
+          {}
+        );
+      });
+
+      it('should call take_snapshot before handle_dialog command', async () => {
+        await runCommand('handle_dialog', '{"action": "accept"}', null);
+
+        expect(mockCallTool).toHaveBeenCalledTimes(2);
+        expect(mockCallTool).toHaveBeenNthCalledWith(1, { name: 'take_snapshot', arguments: {} }, {});
+        expect(mockCallTool).toHaveBeenNthCalledWith(2, { name: 'handle_dialog', arguments: { action: 'accept' } }, {});
+      });
+
+      it('should call take_snapshot before hover command', async () => {
+        await runCommand('hover', '{"uid": "element-1"}', null);
+
+        expect(mockCallTool).toHaveBeenCalledTimes(2);
+        expect(mockCallTool).toHaveBeenNthCalledWith(1, { name: 'take_snapshot', arguments: {} }, {});
+        expect(mockCallTool).toHaveBeenNthCalledWith(2, { name: 'hover', arguments: { uid: 'element-1' } }, {});
+      });
+
+      it('should call take_snapshot before press_key command', async () => {
+        await runCommand('press_key', '{"key": "Enter"}', null);
+
+        expect(mockCallTool).toHaveBeenCalledTimes(2);
+        expect(mockCallTool).toHaveBeenNthCalledWith(1, { name: 'take_snapshot', arguments: {} }, {});
+        expect(mockCallTool).toHaveBeenNthCalledWith(2, { name: 'press_key', arguments: { key: 'Enter' } }, {});
+      });
+
+      it('should call take_snapshot before upload_file command', async () => {
+        await runCommand('upload_file', '{"uid": "file-input", "path": "/path/to/file"}', null);
+
+        expect(mockCallTool).toHaveBeenCalledTimes(2);
+        expect(mockCallTool).toHaveBeenNthCalledWith(1, { name: 'take_snapshot', arguments: {} }, {});
+        expect(mockCallTool).toHaveBeenNthCalledWith(
+          2,
+          { name: 'upload_file', arguments: { uid: 'file-input', path: '/path/to/file' } },
+          {}
+        );
+      });
+
+      it('should log snapshot message for commands requiring snapshot', async () => {
+        await runCommand('click', '{"uid": "element-1"}', null);
+
+        expect(consoleLogSpy).toHaveBeenCalledWith('Taking snapshot before executing command...');
+      });
+    });
+
+    describe('non-snapshot-requiring commands', () => {
+      it('should NOT call take_snapshot for list_pages command', async () => {
+        await runCommand('list_pages', null, null);
+
+        expect(mockCallTool).toHaveBeenCalledTimes(1);
+        expect(mockCallTool).toHaveBeenCalledWith({ name: 'list_pages', arguments: {} }, {});
+      });
+
+      it('should NOT call take_snapshot for navigate_page command', async () => {
+        await runCommand('navigate_page', '{"url": "https://google.com"}', null);
+
+        expect(mockCallTool).toHaveBeenCalledTimes(1);
+        expect(mockCallTool).toHaveBeenCalledWith(
+          { name: 'navigate_page', arguments: { url: 'https://google.com' } },
+          {}
+        );
+      });
+
+      it('should NOT call take_snapshot for take_screenshot command', async () => {
+        await runCommand('take_screenshot', null, null);
+
+        expect(mockCallTool).toHaveBeenCalledTimes(1);
+        expect(mockCallTool).toHaveBeenCalledWith({ name: 'take_screenshot', arguments: {} }, {});
+      });
+
+      it('should NOT call take_snapshot for evaluate_script command', async () => {
+        await runCommand('evaluate_script', '{"expression": "document.title"}', null);
+
+        expect(mockCallTool).toHaveBeenCalledTimes(1);
+        expect(mockCallTool).toHaveBeenCalledWith(
+          { name: 'evaluate_script', arguments: { expression: 'document.title' } },
+          {}
+        );
+      });
+
+      it('should NOT log snapshot message for commands not requiring snapshot', async () => {
+        await runCommand('list_pages', null, null);
+
+        expect(consoleLogSpy).not.toHaveBeenCalledWith('Taking snapshot before executing command...');
+      });
+    });
   });
 });

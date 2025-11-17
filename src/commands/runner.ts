@@ -5,6 +5,20 @@ import { CallToolResultSchema } from '@modelcontextprotocol/sdk/types.js';
 import { DEFAULT_CHROME_SERVER } from '../config/index.js';
 
 /**
+ * Commands that require take_snapshot to be called before execution
+ */
+const COMMANDS_REQUIRING_SNAPSHOT = [
+  'click',
+  'drag',
+  'fill',
+  'fill_form',
+  'handle_dialog',
+  'hover',
+  'press_key',
+  'upload_file',
+];
+
+/**
  * Runs a command in headless mode (non-interactive)
  * @param command - The command/tool name to execute
  * @param arg - JSON string or null for the command arguments
@@ -32,6 +46,18 @@ export const runCommand = async (command: string, arg: string | null, flag: stri
     });
 
     await client.connect(transport);
+
+    // Call take_snapshot first for commands that require it
+    if (COMMANDS_REQUIRING_SNAPSHOT.includes(command)) {
+      console.log('Taking snapshot before executing command...');
+      await client.callTool(
+        {
+          name: 'take_snapshot',
+          arguments: {},
+        },
+        CallToolResultSchema
+      );
+    }
 
     const argObj: { [key: string]: unknown } = arg && arg.trim() !== '' ? JSON.parse(arg) : {};
 
